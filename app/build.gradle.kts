@@ -36,6 +36,10 @@ android {
     }
 }
 
+configurations.all {
+    exclude(group = "xpp3", module = "xpp3")
+}
+
 dependencies {
     implementation(platform("androidx.compose:compose-bom:2024.12.01"))
     implementation("androidx.compose.ui:ui")
