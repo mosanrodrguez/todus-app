@@ -25,17 +25,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cu.todus.app.ui.theme.*
 
-data class ChatItem(
-    val jid: String = "",
-    val alias: String = "",
-    val lastMsg: String = "",
-    val time: String = "",
-    val unread: Int = 0,
-    val typing: Boolean = false,
-    val photoUrl: String = "",
-    val status: String = ""
-)
-
 @Composable
 fun HomeScreen(
     onChatClick: (String) -> Unit = {},
@@ -60,80 +49,43 @@ fun HomeScreen(
     @Composable
     fun StatusIcon(status: String) {
         when (status) {
-            "pending" -> Icon(
-                Icons.Outlined.Schedule,
-                contentDescription = "Enviando",
-                tint = TextMuted,
-                modifier = Modifier.size(14.dp)
-            )
-            "sent" -> Icon(
-                Icons.Outlined.Check,
-                contentDescription = "Enviado",
-                tint = TextMuted,
-                modifier = Modifier.size(14.dp)
-            )
-            "delivered" -> Icon(
-                Icons.Outlined.DoneAll,
-                contentDescription = "Entregado",
-                tint = TextMuted,
-                modifier = Modifier.size(14.dp)
-            )
-            "seen" -> Icon(
-                Icons.Outlined.DoneAll,
-                contentDescription = "Visto",
-                tint = Red,
-                modifier = Modifier.size(14.dp)
-            )
+            "pending" -> Icon(Icons.Outlined.Schedule, null, tint = TextMuted, modifier = Modifier.size(14.dp))
+            "sent" -> Icon(Icons.Outlined.Check, null, tint = TextMuted, modifier = Modifier.size(14.dp))
+            "delivered" -> Icon(Icons.Outlined.DoneAll, null, tint = TextMuted, modifier = Modifier.size(14.dp))
+            "seen" -> Icon(Icons.Outlined.DoneAll, null, tint = Red, modifier = Modifier.size(14.dp))
         }
     }
 
     Column(modifier = Modifier.fillMaxSize().background(Color(0xFF0A0A0A))) {
         Row(
             modifier = Modifier.fillMaxWidth().background(Color(0xFF0A0A0A)).padding(horizontal = 16.dp, vertical = 12.dp).height(60.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = when (connectionState) { "connecting" -> "Conectando..."; "connected" -> "toDus"; else -> "Esperando red..." },
                 color = when (connectionState) { "connecting" -> Red; "connected" -> TextWhite; else -> TextMuted },
-                fontSize = 22.sp,
-                fontWeight = FontWeight.ExtraBold
+                fontSize = 22.sp, fontWeight = FontWeight.ExtraBold
             )
-            Row(
-                modifier = Modifier.clip(RoundedCornerShape(12.dp)).clickable { onMyProfile() }.padding(horizontal = 10.dp, vertical = 6.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
+            Row(modifier = Modifier.clip(RoundedCornerShape(12.dp)).clickable { onMyProfile() }.padding(horizontal = 10.dp, vertical = 6.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 Text(alias.ifEmpty { "Yo" }, color = TextWhite, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
                 Surface(modifier = Modifier.size(38.dp), shape = CircleShape, color = getAvatarColor(alias)) {
-                    Box(contentAlignment = Alignment.Center) {
-                        Text(alias.firstOrNull()?.uppercase() ?: "?", color = Color.White, fontSize = 15.sp, fontWeight = FontWeight.Bold)
-                    }
+                    Box(contentAlignment = Alignment.Center) { Text(alias.firstOrNull()?.uppercase() ?: "?", color = Color.White, fontSize = 15.sp, fontWeight = FontWeight.Bold) }
                 }
             }
         }
-
         HorizontalDivider(color = BorderColor, thickness = 1.dp)
 
         Box(modifier = Modifier.weight(1f)) {
             if (chats.isEmpty()) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(
-                        text = when (connectionState) { "connecting" -> "Conectando..."; "connected" -> "Sin conversaciones"; else -> "Esperando red..." },
-                        color = TextMuted, fontSize = 14.sp
-                    )
+                    Text(when (connectionState) { "connecting" -> "Conectando..."; "connected" -> "Sin conversaciones"; else -> "Esperando red..." }, color = TextMuted, fontSize = 14.sp)
                 }
             } else {
                 LazyColumn {
                     items(chats) { chat ->
-                        Row(
-                            modifier = Modifier.fillMaxWidth().clickable { onChatClick(chat.jid) }.padding(horizontal = 16.dp, vertical = 12.dp),
-                            horizontalArrangement = Arrangement.spacedBy(12.dp)
-                        ) {
+                        Row(modifier = Modifier.fillMaxWidth().clickable { onChatClick(chat.jid) }.padding(horizontal = 16.dp, vertical = 12.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                             Surface(modifier = Modifier.size(52.dp), shape = CircleShape, color = getAvatarColor(chat.alias)) {
-                                Box(contentAlignment = Alignment.Center) {
-                                    Text(chat.alias.firstOrNull()?.uppercase() ?: "?", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
-                                }
+                                Box(contentAlignment = Alignment.Center) { Text(chat.alias.firstOrNull()?.uppercase() ?: "?", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold) }
                             }
                             Column(modifier = Modifier.weight(1f)) {
                                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
@@ -143,26 +95,12 @@ fun HomeScreen(
                                 Spacer(Modifier.height(3.dp))
                                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
                                     Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
-                                        if (chat.status.isNotEmpty()) {
-                                            StatusIcon(chat.status)
-                                            Spacer(Modifier.width(2.dp))
-                                        }
-                                        Text(
-                                            text = if (chat.typing) "Escribiendo..." else chat.lastMsg,
-                                            color = if (chat.typing) Red else TextMuted,
-                                            fontSize = 13.sp,
-                                            fontStyle = if (chat.typing) FontStyle.Italic else FontStyle.Normal,
-                                            maxLines = 1,
-                                            overflow = TextOverflow.Ellipsis
-                                        )
+                                        if (chat.status.isNotEmpty()) { StatusIcon(chat.status); Spacer(Modifier.width(2.dp)) }
+                                        Text(if (chat.typing) "Escribiendo..." else chat.lastMsg, color = if (chat.typing) Red else TextMuted, fontSize = 13.sp, fontStyle = if (chat.typing) FontStyle.Italic else FontStyle.Normal, maxLines = 1, overflow = TextOverflow.Ellipsis)
                                     }
                                     if (chat.unread > 0) {
                                         Surface(shape = RoundedCornerShape(10.dp), color = Red) {
-                                            Text(
-                                                text = if (chat.unread > 99) "99+" else chat.unread.toString(),
-                                                color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.Bold,
-                                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
-                                            )
+                                            Text(if (chat.unread > 99) "99+" else chat.unread.toString(), color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp))
                                         }
                                     }
                                 }
@@ -179,9 +117,7 @@ fun HomeScreen(
             }
             Spacer(Modifier.width(10.dp))
             Surface(modifier = Modifier.size(48.dp).clickable { onContacts() }, shape = RoundedCornerShape(16.dp), color = Red, shadowElevation = 0.dp) {
-                Box(contentAlignment = Alignment.Center) {
-                    Icon(Icons.Outlined.Chat, "Chat", tint = Color.White, modifier = Modifier.size(22.dp))
-                }
+                Box(contentAlignment = Alignment.Center) { Icon(Icons.Outlined.Chat, "Chat", tint = Color.White, modifier = Modifier.size(22.dp)) }
             }
         }
     }

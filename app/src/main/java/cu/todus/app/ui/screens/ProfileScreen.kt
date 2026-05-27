@@ -49,8 +49,8 @@ fun ProfileScreen(
             }
             Spacer(Modifier.height(16.dp))
             Text(alias.ifEmpty { "Usuario" }, color = TextWhite, fontSize = 26.sp, fontWeight = FontWeight.Bold)
-            if (todusId.isNotEmpty()) { Spacer(Modifier.height(4.dp)); Text("@$todusId", color = TextSecondary, fontSize = 15.sp) }
-            if (phone.isNotEmpty()) { Spacer(Modifier.height(4.dp)); Text("+$phone", color = TextSecondary, fontSize = 15.sp) }
+            if (todusId.isNotEmpty()) { Spacer(Modifier.height(4.dp)); Text("@$todusId", color = TextMuted, fontSize = 15.sp) }
+            if (phone.isNotEmpty()) { Spacer(Modifier.height(4.dp)); Text("+$phone", color = TextMuted, fontSize = 15.sp) }
             Spacer(Modifier.height(16.dp))
             Text(bio.ifEmpty { "Sin descripción" }, color = TextMuted, fontSize = 14.sp, modifier = Modifier.widthIn(max = 300.dp))
             Spacer(Modifier.weight(1f))

@@ -23,13 +23,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cu.todus.app.ui.theme.*
 
-data class ContactItem(
-    val jid: String = "",
-    val alias: String = "",
-    val info: String = "",
-    val photoUrl: String = ""
-)
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ContactsScreen(
@@ -43,44 +36,26 @@ fun ContactsScreen(
 ) {
     var searchQuery by remember { mutableStateOf("") }
 
-    val avatarColors = listOf(
-        Color(0xFFE056FD), Color(0xFF2ECC71), Color(0xFF3498DB),
-        Color(0xFFE67E22), Color(0xFFE74C3C), Color(0xFF1ABC9C),
-        Color(0xFF9B59B6), Color(0xFFF1C40F)
-    )
-
-    fun getAvatarColor(name: String): Color {
-        if (name.isEmpty()) return avatarColors[0]
-        val h = name.fold(0) { acc, c -> acc * 31 + c.code }
-        return avatarColors[Math.abs(h) % avatarColors.size]
-    }
+    val avatarColors = listOf(Color(0xFFE056FD), Color(0xFF2ECC71), Color(0xFF3498DB), Color(0xFFE67E22), Color(0xFFE74C3C), Color(0xFF1ABC9C), Color(0xFF9B59B6), Color(0xFFF1C40F))
+    fun getAvatarColor(name: String): Color { if (name.isEmpty()) return avatarColors[0]; val h = name.fold(0) { acc, c -> acc * 31 + c.code }; return avatarColors[Math.abs(h) % avatarColors.size] }
 
     Column(modifier = Modifier.fillMaxSize().background(Color(0xFF0A0A0A))) {
         Row(modifier = Modifier.fillMaxWidth().background(Color(0xFF0A0A0A)).padding(horizontal = 16.dp, vertical = 12.dp).height(60.dp), verticalAlignment = Alignment.CenterVertically) {
             IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, "Atrás", tint = TextWhite, modifier = Modifier.size(20.dp)) }
-            Spacer(Modifier.width(8.dp))
-            Text("Contactos", color = TextWhite, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+            Spacer(Modifier.width(8.dp)); Text("Contactos", color = TextWhite, fontSize = 18.sp, fontWeight = FontWeight.Bold)
         }
-
         HorizontalDivider(color = BorderColor, thickness = 1.dp)
 
         OutlinedTextField(
-            value = searchQuery,
-            onValueChange = { searchQuery = it; onClearSearch() },
+            value = searchQuery, onValueChange = { searchQuery = it; onClearSearch() },
             modifier = Modifier.fillMaxWidth().padding(12.dp, 8.dp),
             placeholder = { Text("Buscar...", color = TextMuted) },
             leadingIcon = { Icon(Icons.Outlined.Search, null, tint = TextMuted) },
             colors = OutlinedTextFieldDefaults.colors(focusedTextColor = TextWhite, unfocusedTextColor = TextWhite, focusedBorderColor = Color.Transparent, unfocusedBorderColor = Color.Transparent, cursorColor = Red),
-            shape = RoundedCornerShape(14.dp),
-            singleLine = true,
+            shape = RoundedCornerShape(14.dp), singleLine = true,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-            keyboardActions = KeyboardActions(onSearch = {
-                if (searchQuery.startsWith("@")) {
-                    onSearch(searchQuery.drop(1))
-                }
-            })
+            keyboardActions = KeyboardActions(onSearch = { if (searchQuery.startsWith("@")) onSearch(searchQuery.drop(1)) })
         )
-
         HorizontalDivider(color = BorderColor, thickness = 1.dp)
 
         if (searchResult != null) {
@@ -95,7 +70,6 @@ fun ContactsScreen(
         } else {
             val filtered = if (searchQuery.startsWith("@")) contacts.filter { it.alias.lowercase().contains(searchQuery.drop(1).lowercase()) }
             else contacts.filter { it.alias.lowercase().contains(searchQuery.lowercase()) }
-
             LazyColumn {
                 items(filtered) { contact ->
                     Row(modifier = Modifier.fillMaxWidth().clickable { onContactClick(contact.jid) }.padding(14.dp, 16.dp), horizontalArrangement = Arrangement.spacedBy(14.dp), verticalAlignment = Alignment.CenterVertically) {

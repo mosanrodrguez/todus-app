@@ -9,6 +9,7 @@ import cu.todus.app.data.remote.AuthRepository
 import cu.todus.app.data.remote.ConnectionState
 import cu.todus.app.data.remote.XmppManager
 import cu.todus.app.ui.screens.*
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaType
@@ -117,10 +118,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
         xmppManager.onTypingReceived = { sender ->
-            if (_activeChatJid.value?.contains(sender) == true) {
-                _activeChatTyping.value = true
-                kotlinx.coroutines.delay(3000)
-                _activeChatTyping.value = false
+            viewModelScope.launch {
+                if (_activeChatJid.value?.contains(sender) == true) {
+                    _activeChatTyping.value = true
+                    delay(3000)
+                    _activeChatTyping.value = false
+                }
             }
         }
         xmppManager.onProfileReceived = { alias, photo, bio, todusId ->
@@ -140,8 +143,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun login(phone: String, uuid: String) {
         viewModelScope.launch {
-            _connectionState.value = "connecting"
-            _phone.value = phone
+            _connectionState.value = "connecting"; _phone.value = phone
             val jwt = authRepository.getToken(phone, uuid)
             if (jwt != null) {
                 sessionManager.saveSession(phone, uuid, jwt)
