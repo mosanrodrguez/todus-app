@@ -82,7 +82,7 @@ fun NavGraph() {
             val bio by viewModel.bio.collectAsState()
             EditProfileScreen(alias = alias, bio = bio,
                 onBack = { navController.popBackStack() },
-                onSaved = { newAlias, newBio -> viewModel.updateProfile(newAlias, newBio); navController.popBackStack() })
+                onSaved = { newAlias, newBio -> navController.popBackStack() })
         }
         composable(Routes.USER_PROFILE) { backStackEntry ->
             UserProfileScreen(jid = backStackEntry.arguments?.getString("jid") ?: "",

@@ -59,11 +59,12 @@ fun ContactsScreen(
         HorizontalDivider(color = BorderColor, thickness = 1.dp)
 
         if (searchResult != null) {
-            Row(modifier = Modifier.fillMaxWidth().clickable { onContactClick(searchResult.jid) }.padding(14.dp, 16.dp), horizontalArrangement = Arrangement.spacedBy(14.dp), verticalAlignment = Alignment.CenterVertically) {
-                Surface(modifier = Modifier.size(50.dp), shape = CircleShape, color = getAvatarColor(searchResult.alias)) {
-                    Box(contentAlignment = Alignment.Center) { Text(searchResult.alias.firstOrNull()?.uppercase() ?: "?", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold) }
+            val sr = searchResult
+            Row(modifier = Modifier.fillMaxWidth().clickable { onContactClick(sr.jid) }.padding(14.dp, 16.dp), horizontalArrangement = Arrangement.spacedBy(14.dp), verticalAlignment = Alignment.CenterVertically) {
+                Surface(modifier = Modifier.size(50.dp), shape = CircleShape, color = getAvatarColor(sr.alias)) {
+                    Box(contentAlignment = Alignment.Center) { Text(sr.alias.firstOrNull()?.uppercase() ?: "?", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold) }
                 }
-                Column { Text(searchResult.alias, color = TextWhite, fontSize = 16.sp, fontWeight = FontWeight.SemiBold); Text(searchResult.info, color = TextMuted, fontSize = 13.sp) }
+                Column { Text(sr.alias, color = TextWhite, fontSize = 16.sp, fontWeight = FontWeight.SemiBold); Text(sr.info, color = TextMuted, fontSize = 13.sp) }
             }
         } else if (searchNotFound) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text("Usuario no encontrado", color = TextMuted, fontSize = 14.sp) }
