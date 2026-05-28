@@ -103,7 +103,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             _alias.value = alias; _photoUrl.value = photo; _bio.value = bio; _todusId.value = todusId
         }
         xmppManager.onContactsReceived = { list ->
-            _contacts.value = list.map { ContactItem("$it@im.todus.cu", it, "") }
+            _contacts.value = list.map { (phone, alias) -> ContactItem("$phone@im.todus.cu", alias, "") }
         }
         xmppManager.onContactFound = { phone, alias ->
             _searchResult.value = ContactItem("$phone@im.todus.cu", alias, phone)
